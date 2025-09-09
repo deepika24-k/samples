@@ -1,0 +1,674 @@
+docker in jar
+# Use a Java runtime base image
+FROM openjdk:17-jdk-slim
+
+# Set working directory inside container
+WORKDIR /app
+
+# Copy your JAR into container
+COPY target/sample-maven-project-1.0-SNAPSHOT.jar app.jar
+
+# Expose port (if your app runs on a port, e.g., Spring Boot default 8080)
+EXPOSE 8080
+
+# Command to run the JAR
+CMD ["java", "-jar", "app.jar"]
+
+
+docker for war
+# Use Tomcat 9 as base image
+FROM tomcat:9.0
+
+# Remove default webapps (optional)
+RUN rm -rf /usr/local/tomcat/webapps/*
+
+# Copy WAR file into Tomcat
+COPY target/*.war /usr/local/tomcat/webapps/ROOT.war
+
+# Expose Tomcat port
+EXPOSE 8080
+
+# Start Tomcat
+CMD ["catalina.sh", "run"]
+
+
+--------------------------
+
+docker-compose jar
+version: "3.8"
+
+services:
+  app:
+    image: samreen/maven-jar:1.0   # your Docker Hub image
+    container_name: jar_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydb
+
+
+docker-compose war
+version: "3.8"
+
+services:
+  webapp:
+    image: samreen/maven-webapp:1.0   # your WAR Docker Hub image
+    container_name: war_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydb
+----------------------------
+
+dependency:
+<!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>servlet-api</artifactId>
+    <version>2.5</version>
+    <scope>provided</scope>
+</dependency>
+-----------------------
+Q1: Discard unstaged changes in one file  
+A: git checkout -- <filename>  
+
+Q2: Remove file from staging area without losing changes  
+A: git reset HEAD <file1.txt>  
+
+Q3: Fix wrong commit message (not pushed yet)  
+A: git commit --amend  
+
+Q4: View commit history (readable)  
+A: git log --oneline  
+
+Q5: Set global name/email  
+A: git config --global user.name "Your Name"  
+   git config --global user.email "you@example.com"  
+
+Q6: View unstaged changes  
+A: git diff  
+
+Q7: Switch to branch feature/login  
+A: git switch feature/login  
+
+Q8: Restore deleted branch feature-ui (locally)  
+A: git checkout -b feature-ui  
+
+Q9: Push local commits  
+A: git push  
+
+Q10: Fetch latest changes (no merge)  
+A: git fetch  
+
+Q11: Create & switch to new branch search-filter  
+A: git switch -c search-filter  
+
+Q12: Remove file from history (API key)  
+A: git filter-repo --path <filename> --invert-paths  
+
+Q13: Show all local + remote branches  
+A: git branch -a  
+
+Q14: Merge signup into main  
+A: git merge feature/signup  
+
+Q15: Resolve conflict in app.js  
+A: Edit file → git add app.js → git commit  
+
+Q16: Ignore `.log` and `node_modules/`  
+A: Add them to `.gitignore`  
+
+Q17: Who last changed line 25 in script.py  
+A: git blame script.py  
+
+Q18: Save work temporarily  
+A: git stash  
+
+Q19: Restore stashed changes  
+A: git stash pop  
+
+Q20: Delete branch feature/test  
+A: git branch -d feature/test  
+
+Q21: Delete merged branch feature-ui  
+A: git branch -d feature-ui  
+
+Q22: Force delete branch feature-experiment  
+A: git branch -D feature-experiment  
+
+Q23: Delete feature-ui safely  
+A: Ensure you are not on feature-ui before deleting  
+
+Q24: Unsure if bugfix-footer merged?  
+A: git branch --merged  
+
+Q25: Delete multiple merged branches  
+A: git branch -d feature-a feature-b feature-c  
+
+Q1: Clone remote repo  
+A: git clone <repo-url>  
+
+Q2: View remotes  
+A: git remote -v  
+
+Q3: Add new remote  
+A: git remote add <name> <url>  
+
+Q4: Remove remote  
+A: git remote remove <name>  
+
+Q5: Rename remote  
+A: git remote rename <old> <new>  
+
+Q6: Fetch updates (no merge)  
+A: git fetch  
+
+Q7: Pull updates & merge  
+A: git pull  
+
+Q8: Push commits  
+A: git push  
+
+Q9: Push first time + set upstream  
+A: git push -u origin <branch>  
+
+Q10: Change remote URL  
+A: git remote set-url <name> <new-url>  
+
+Q11: List remote branches  
+A: git branch -r  
+
+Q12: Remove stale branches  
+A: git remote prune origin  
+
+Q13: Fetch specific branch  
+A: git fetch origin <branch>:<branch>  
+
+Q14: Show remote details  
+A: git remote show <name>  
+
+Q15: Rebase onto remote branch  
+A: git pull --rebase origin <branch>  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------
+Concise Steps of Lab Action Plan
+Create Organization (GitHub)
+
+Click New organization → Create free organization
+
+Enter org name, email, verify account → Next → Add members → Send invitations → Complete setup
+
+Set member & project base permissions to Write
+
+Create a remote repo in the org → Private or public
+
+Collaborating in Shared Repo
+
+Collaborator 1 (Owner):
+
+Settings → Collaborators → Add people → Invite Collaborator 2
+
+Collaborator 2:
+
+Set up Git:
+
+git config --global user.name "Your Name"
+git config --global user.email you@example.com
+
+
+Clone shared repo:
+
+git clone https://github.com/OrgYOG/commonREPO.git
+cd commonREPO
+
+
+Create feature branch:
+
+git checkout -b feature/my-feature
+
+
+Make changes →
+
+git add .
+git commit -m "Descriptive commit"
+git push origin feature/my-feature
+
+
+Keep updated:
+
+git checkout main
+git pull origin main
+git checkout feature/my-feature
+git merge main
+
+ Fork & Pull Request
+
+Click Fork → Clone your forked repo
+
+Make changes →
+
+git add .
+git commit -m "Feature change"
+git push origin main
+
+
+Create Pull Request → Add title & comment → Submit for review
+
+Merge PR after approval
+
+Resolve Merge Conflicts
+
+Check status:
+
+git status
+
+
+Open conflicted file (look for <<<<<<<, =======, >>>>>>>)
+
+Edit → remove conflict markers → keep correct code
+
+Mark resolved:
+
+git add f1.txt
+git commit
+git push origin feature-branch
+
+
+If too messy →
+
+git merge --abort
+
+Create & Apply Patch
+
+To create patch:
+
+git format-patch -1 <commit-hash>
+
+
+Send .patch file → Receiver applies with:
+
+git apply my-changes.patch
+# or
+git am 0001-commit-message.patch
+
+Scenario-Based Question (SBQ) Answers
+# 1. Resolve "rejected - non-fast-forward":
+git pull origin main --rebase
+git push origin main
+
+# 2. Push feature branch without affecting main:
+git push origin feature/my-feature
+
+# 3. Update local repo structure:
+git fetch origin
+git pull origin main
+
+# 4. Pull colleague’s changes safely:
+git stash
+git pull origin main
+git stash pop
+
+# 5. Remove sensitive file from history:
+git rm --cached sensitive_file
+git commit -m "Remove sensitive file"
+git push origin main
+
+# 6. Merge latest main into feature branch:
+git checkout feature/my-feature
+git pull origin main
+
+# 7. Push to a new remote:
+git remote set-url origin https://github.com/yournewrepo.git
+git push origin feature/my-feature
+
+# 8. Update local branch without losing changes:
+git stash
+git pull origin main
+git stash pop
+
+# 9. Resolve conflicting local changes:
+git status
+# Fix conflict markers in file
+git add .
+git commit
+git push
+
+# 10. Delete remote branch:
+git push origin --delete feature/my-feature
+
+# Scenario Steps:
+# 11. Update local main:
+git checkout main
+git pull origin main
+
+# 12. Update feature/ui-update branch:
+git checkout feature/ui-update
+git merge main
+
+# 13. Push feature branch:
+git push origin feature/ui-update
+# If conflict:
+git pull origin feature/ui-update --rebase
+# Resolve conflicts → commit → push
+
+# 14. Apply patch file:
+git am 0001-commit-message.patch
+
+# 15. Merge feature branch into main:
+git checkout main
+git merge feature/ui-update
+git push origin main
+
+
+-------------------------------------
+
+# 1. Fix maven-compiler-plugin error
+mvn clean install -X  # Run with debug logs to see full error details
+
+# 2. Confirm dependency availability
+ls ~/.m2/repository/com/google/code/gson/gson/
+mvn dependency:tree  # Shows dependency graph
+
+# 3. Apply .patch and build
+git am bugfix.patch
+mvn clean install
+
+# 4. Rerun failed tests only
+mvn -Dtest=AppTest#testSum test
+
+# 5. Fix Unsupported class version error
+# Ensure maven-compiler-plugin config uses correct <source> & <target>
+<source>17</source>
+<target>17</target>
+
+# 6. WAR → JAR change in pom.xml
+<packaging>jar</packaging>
+
+# 7. Change output dir
+<build>
+  <directory>build_output</directory>
+</build>
+
+# 8. Generate site report
+mvn site
+# Outputs in target/site/
+
+# 9. Build Java project
+mvn clean install
+# Generates: target/*.jar, target/classes/, target/surefire-reports/
+
+# 10. Dependency conflict resolution
+mvn dependency:tree
+# Override versions explicitly in pom.xml
+
+# 11. Write and run JUnit
+# Write test in src/test/java
+mvn test
+# Compiled in target/test-classes/, reports in target/surefire-reports/
+
+# 12. Create executable JAR
+Use maven-jar-plugin with <mainClass> specified
+
+# 13. Install custom JAR
+mvn install:install-file -Dfile=my-lib.jar -DgroupId=com.example -DartifactId=my-lib -Dversion=1.0 -Dpackaging=jar
+# Confirm in pom.xml dependencies & ~/.m2
+
+# 14. Create Maven web project (WAR)
+Use archetype: maven-archetype-webapp
+Standard structure: src/main/webapp/, WEB-INF/web.xml
+
+# 15. Build WAR + Deploy
+mvn package
+# target/*.war → Copy to Tomcat webapps/
+
+# 16. JSTL + servlet-api in pom.xml
+<dependency>
+  <groupId>javax.servlet</groupId>
+  <artifactId>javax.servlet-api</artifactId>
+  <version>4.0.1</version>
+  <scope>provided</scope>
+</dependency>
+
+# Why 'provided'? Tomcat already provides servlet API, no need to bundle it.
+
+# 17. Maven web vs WAR app
+# Web app uses packaging 'war' → deploy to servlet container
+# Standalone app uses 'jar' with main method → run via java -jar
+------------------------------
+
+version: '3.8'
+
+services:
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+
+
+
+
+# 1. Should you run multiple apps in same container?
+# Nope. Each service gets its own container for modularity and scaling.
+
+# 2. Flask API + Nginx, expose on different ports?
+services:
+  flask-api:
+    image: flask-app
+    ports:
+      - "5000:5000"
+
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+
+# 3. React + Express + Mongo setup?
+# See real-world example above
+
+# 4. Two containers using same host port (8080)?
+# Conflict! Solution: map to different host ports:
+services:
+  app1:
+    ports:
+      - "8081:8080"
+
+  app2:
+    ports:
+      - "8082:8080"
+
+# 5. Restart all services quickly?
+docker-compose restart
+
+# 6. Update only frontend container?
+docker-compose up -d --build frontend
+
+# 7. Tomcat "Connection Refused" on port 8080?
+# Likely cause: Port not mapped correctly or firewall blocks it
+
+# 8. Which container uses port 3000?
+docker ps
+# Check PORTS column for mapping
+
+# 9. Stop + clean up Tomcat container & image?
+docker-compose down
+docker rmi tomcat
+
+# 10. Share Docker Image?
+docker save my-app-image > my-app-image.tar
+# Send tar file or push to Docker Hub:
+docker tag my-app-image mydockerhubuser/my-app-image:latest
+docker push mydockerhubuser/my-app-image:latest
+
+
+
+------------------------------------
+
+# Step 1: Pull the redis image
+docker pull redis
+
+# Step 2: Run a Redis container
+docker run --name my-redis -d redis
+# ➔ Creates and starts a container named my-redis in the background
+
+# Step 3: Check running containers
+docker ps
+# ➔ Lists all active containers
+
+# Step 4: Access Redis CLI inside the container
+docker exec -it my-redis redis-cli
+# ➔ Then run:
+SET name "Alice"
+GET name
+exit
+# ➔ Saves and retrieves key-value pairs in Redis
+
+# Step 5: Stop the Redis container
+docker stop my-redis
+# ➔ Stops it but doesn’t delete the container
+
+# Step 6: Restart the Redis container
+docker start my-redis
+# ➔ Restarts the stopped container
+
+# Step 7: Remove the Redis container (after stopping)
+docker rm my-redis
+# ➔ Permanently deletes the container
+
+# Step 8: Remove the Redis image
+docker rmi redis
+# ➔ Deletes the image locally
+
+redis 
+
+
+# Step 1: Create Dockerfile in project folder
+# Dockerfile content:
+FROM redis:latest
+CMD ["redis-server"]
+
+# Step 2: Build custom image
+docker build -t redisnew .
+
+# Step 3: Run container from custom image
+docker run --name myredisnew -d redisnew
+
+# Step 4: List containers
+docker ps
+
+# Step 5: Stop container
+docker stop myredisnew
+
+# Step 6: Log in to Docker Hub
+docker login
+
+# Step 7: Commit container changes into new image
+docker commit container_id username/redis1
+# ➔ Saves container as an image named username/redis1
+
+# Step 8: List all images
+docker images
+
+# Step 9: Push custom image to Docker Hub
+docker push username/redis1
+
+# Step 10: Remove the container
+docker rm container_id
+
+# Step 11: Remove the custom image
+docker rmi username/redis1
+
+# Step 12: Check all containers
+docker ps -a
+
+# Step 13: Log out of Docker Hub
+docker logout
+
+# Step 14: Pull image from Docker Hub
+docker pull username/redis1
+
+# Step 15: Run a container from pulled image
+docker run --name myredis -d username/redis1
+
+# Step 16: Access Redis CLI in container
+docker exec -it myredis redis-cli
+SET name "Abcdef"
+GET name
+exit
+
+# Step 17: List all containers again
+docker ps -a
+
+# Step 18: Stop myredis container
+docker stop myredis
+
+# Step 19: Remove container by ID
+docker rm container_id
+
+# Step 20: List images again
+docker images
+
+# Step 21: Remove image again
+docker rmi username/redis1
+
+# Step 22 (Optional): Clean up login creds
+docker logout
